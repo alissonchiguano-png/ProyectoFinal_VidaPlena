@@ -106,3 +106,4 @@ DESC citas;
 DESC expedientes;
 DESC recetas;
 
+-- prueba de conexion 
