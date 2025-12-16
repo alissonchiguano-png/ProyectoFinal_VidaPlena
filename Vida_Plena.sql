@@ -4,7 +4,7 @@ CREATE DATABASE vidaplena;
 -- SELECCIONAR LA BASE DE DATOS
 USE vidaplena;
 
--- TABLA PACIENTES 
+-- TABLA pacientes (clientes)
 CREATE TABLE pacientes (
     cedula CHAR(10) PRIMARY KEY,
     nombre VARCHAR(100),
