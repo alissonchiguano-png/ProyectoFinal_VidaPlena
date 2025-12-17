@@ -1,255 +1,202 @@
--- Crear la base de datos
-CREATE DATABASE vidaplena;
 
--- Seleccionar la base de datos
+
+-- DROP DATABASE vidaplena;
+-- CREAR BASE DE DATOS
+
+CREATE DATABASE vidaplena;
 USE vidaplena;
 
+
 -- TABLA 1: pacientes
--- 1. Crear tabla
+-- PK: cedula (identifica de forma única al paciente)
+
 CREATE TABLE pacientes (
     cedula CHAR(10),
-    nombre VARCHAR(100),
+    nombre VARCHAR(100) NOT NULL,
     fechanacimiento DATE,
     telefono VARCHAR(15),
     correo VARCHAR(100),
     direccion VARCHAR(150)
 );
 
--- 3. ALTER TABLE para pacientes
+-- Primary Key
 ALTER TABLE pacientes
 ADD PRIMARY KEY (cedula);
 
+-- Validaciones
 ALTER TABLE pacientes
-MODIFY COLUMN nombre VARCHAR(100) NOT NULL;
+ADD CONSTRAINT pacientes_cedula_ck CHECK (cedula REGEXP '^[0-9]{10}$');
 
 ALTER TABLE pacientes
-ADD CONSTRAINT pacientes_cedula_ck
-CHECK (cedula REGEXP '^[0-9]{10}$');  -- Solo 10 dígitos numéricos
+ADD CONSTRAINT pacientes_telefono_ck CHECK (telefono REGEXP '^[0-9]{10}$');
 
 ALTER TABLE pacientes
-ADD CONSTRAINT pacientes_telefono_ck
-CHECK (telefono REGEXP '^[0-9]{10}$');  -- Teléfono ecuatoriano típico: 10 dígitos
+ADD CONSTRAINT pacientes_correo_ck CHECK (correo LIKE '%@%.%');
 
-ALTER TABLE pacientes
-ADD CONSTRAINT pacientes_correo_ck
-CHECK (correo LIKE '%@%.%');  -- Validación básica de correo
-
--- 4. INSERTS correctos de pacientes
-INSERT INTO pacientes VALUES ('0102030401', 'Ana Pérez', '1995-06-12', '0987654321', 'ana.perez@gmail.com', 'Av. Central');
-INSERT INTO pacientes VALUES ('0102030402', 'Luis Gómez', '1988-02-20', '0991122334', 'luis.gomez@hotmail.com', 'Calle Sucre');
-INSERT INTO pacientes VALUES ('0102030403', 'María Torres', '2000-11-05', '0974455667', 'maria.t@gmail.com', 'Barrio Norte');
-INSERT INTO pacientes VALUES ('0102030404', 'Carlos Molina', '1992-01-18', '0983344556', 'carlos.m@gmail.com', 'Cdla. Kennedy');
-INSERT INTO pacientes VALUES ('0102030405', 'Sofía Andrade', '1998-07-30', '0967788990', 'sofia.a@gmail.com', 'Av. Quito');
-INSERT INTO pacientes VALUES ('0102030406', 'José Castillo', '1985-03-14', '0956677889', 'jose.c@hotmail.com', 'Los Álamos');
-INSERT INTO pacientes VALUES ('0102030407', 'Paola Rivas', '1999-09-22', '0945566778', 'paola.r@gmail.com', 'La Floresta');
-INSERT INTO pacientes VALUES ('0102030408', 'Miguel Vera', '1979-12-01', '0934455667', 'miguel.v@gmail.com', 'Urdesa');
-INSERT INTO pacientes VALUES ('0102030409', 'Andrea López', '1993-05-09', '0923344556', 'andrea.l@gmail.com', 'Cdla. España');
-INSERT INTO pacientes VALUES ('0102030410', 'Fernando Cruz', '1987-08-17', '0912233445', 'fernando.c@gmail.com', 'Mapasingue');
+-- Inserts pacientes
+INSERT INTO pacientes VALUES ('0102030401', 'Ana Pérez', '1995-06-12', '0987654321', 'ana@gmail.com', 'Av. Central');
+INSERT INTO pacientes VALUES ('0102030402', 'Luis Gómez', '1988-02-20', '0991122334', 'luis@hotmail.com', 'Calle Sucre');
+INSERT INTO pacientes VALUES ('0102030403', 'María Torres', '2000-11-05', '0974455667', 'maria@gmail.com', 'Barrio Norte');
+INSERT INTO pacientes VALUES ('0102030404', 'Carlos Ramírez', '1992-09-18', '0981234567', 'carlos.ramirez@yahoo.com', 'Av. Amazonas');
+INSERT INTO pacientes VALUES ('0102030405', 'Sofía Mendoza', '1985-03-30', '0998765432', 'sofia.mendoza@gmail.com', 'Calle Maldonado');
+INSERT INTO pacientes VALUES ('0102030406', 'Diego Herrera', '1979-12-01', '0965432109', 'diego.herrera@outlook.com', 'Sector La Carolina');
+INSERT INTO pacientes VALUES ('0102030407', 'Laura Fernández', '2003-07-22', '0988877665', 'laura.fernandez@gmail.com', 'Urbanización El Bosque');
+INSERT INTO pacientes VALUES ('0102030408', 'José Vargas', '1990-04-15', '0993344556', 'jose.vargas@hotmail.com', 'Calle Bolívar');
+INSERT INTO pacientes VALUES ('0102030409', 'Patricia Ortiz', '1982-10-08', '0976655443', 'patricia.ortiz@gmail.com', 'Av. 10 de Agosto');
+INSERT INTO pacientes VALUES ('0102030410', 'Andrés Castillo', '1998-01-25', '0985566778', 'andres.castillo@yahoo.com', 'Barrio Sur');
 
 
 -- TABLA 2: medicos
--- 1. Crear tabla
+-- PK: id (identifica al médico)
+
 CREATE TABLE medicos (
     id INT,
-    nombre VARCHAR(100),
+    nombre VARCHAR(100) NOT NULL,
     especialidad VARCHAR(100),
     consultorio VARCHAR(50),
     horario VARCHAR(50)
 );
 
--- 3. ALTER TABLE para medicos
+-- Primary Key
 ALTER TABLE medicos
 ADD PRIMARY KEY (id);
 
+-- Restricción de unicidad
 ALTER TABLE medicos
-MODIFY COLUMN nombre VARCHAR(100) NOT NULL;
+ADD CONSTRAINT medicos_nombre_especialidad_uk UNIQUE (nombre, especialidad);
 
-ALTER TABLE medicos
-MODIFY id INT AUTO_INCREMENT;
-
-ALTER TABLE medicos
-ADD CONSTRAINT medicos_nombre_especialidad_uk
-UNIQUE (nombre, especialidad);
-
-
--- 4. INSERTS correctos de médicos (sin especificar ID si usas AUTO_INCREMENT, pero para coincidir con datos, especificamos)
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (1, 'Dr. Carlos Ruiz', 'Medicina General', 'Consultorio 1', '08:00-12:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (2, 'Dra. Elena López', 'Cardiología', 'Consultorio 3', '09:00-13:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (3, 'Dr. Juan Andrade', 'Pediatría', 'Consultorio 2', '14:00-18:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (4, 'Dra. Paula Sánchez', 'Ginecología', 'Consultorio 4', '08:00-12:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (5, 'Dr. Marco León', 'Traumatología', 'Consultorio 5', '10:00-14:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (6, 'Dra. Diana Ortiz', 'Dermatología', 'Consultorio 6', '09:00-13:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (7, 'Dr. Andrés Paredes', 'Neurología', 'Consultorio 7', '15:00-19:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (8, 'Dra. Verónica Peña', 'Endocrinología', 'Consultorio 8', '08:00-12:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (9, 'Dr. Pablo Herrera', 'Oftalmología', 'Consultorio 9', '14:00-18:00');
-INSERT INTO medicos (id, nombre, especialidad, consultorio, horario) VALUES (10, 'Dra. Lucía Méndez', 'Medicina Interna', 'Consultorio 10', '09:00-13:00');
+-- Inserts medicos
+INSERT INTO medicos VALUES (1, 'Dr. Carlos Ruiz', 'Medicina General', 'Consultorio 1', '08:00-12:00');
+INSERT INTO medicos VALUES (2, 'Dra. Elena López', 'Cardiología', 'Consultorio 3', '09:00-13:00');
+INSERT INTO medicos VALUES (3, 'Dr. Juan Andrade', 'Pediatría', 'Consultorio 2', '14:00-18:00');
+INSERT INTO medicos VALUES (4, 'Dra. Patricia Morales', 'Dermatología', 'Consultorio 4', '10:00-14:00');
+INSERT INTO medicos VALUES (5, 'Dr. Roberto Sánchez', 'Traumatología', 'Consultorio 5', '07:30-11:30');
+INSERT INTO medicos VALUES (6, 'Dra. Isabel Vargas', 'Ginecología', 'Consultorio 6', '15:00-19:00');
+INSERT INTO medicos VALUES (7, 'Dr. Miguel Torres', 'Oftalmología', 'Consultorio 7', '08:30-12:30');
+INSERT INTO medicos VALUES (8, 'Dra. Laura Castillo', 'Neurología', 'Consultorio 8', '13:00-17:00');
+INSERT INTO medicos VALUES (9, 'Dr. Andrés Herrera', 'Odontología', 'Consultorio 9', '09:00-13:00');
+INSERT INTO medicos VALUES (10, 'Dra. Sofia Ramírez', 'Endocrinología', 'Consultorio 10', '14:00-18:00');
 
 
 -- TABLA 3: citas
--- 1. Crear tabla
+-- PK compuesta (id, cedula_paciente, id_medico)
+-- FK forman parte de la PK → línea sólida
+
 CREATE TABLE citas (
     id INT,
-    fecha DATE,
-    hora TIME,
     cedula_paciente CHAR(10),
     id_medico INT,
+    fecha DATE,
+    hora TIME,
     motivo VARCHAR(200),
-    estado VARCHAR(50) DEFAULT 'Agendada'  -- Valor por defecto: Agendada
+    estado VARCHAR(50)
 );
 
--- 3. ALTER TABLE para citas
+-- Primary Key compuesta
 ALTER TABLE citas
-ADD PRIMARY KEY (id);
+ADD PRIMARY KEY (id, cedula_paciente, id_medico);
 
-ALTER TABLE citas
-MODIFY id INT AUTO_INCREMENT;
-
-ALTER TABLE citas
-MODIFY COLUMN motivo VARCHAR(200) NOT NULL;
-
+-- Foreign Key hacia pacientes
 ALTER TABLE citas
 ADD CONSTRAINT citas_paciente_fk
 FOREIGN KEY (cedula_paciente) REFERENCES pacientes(cedula);
 
+-- Foreign Key hacia medicos
 ALTER TABLE citas
 ADD CONSTRAINT citas_medico_fk
 FOREIGN KEY (id_medico) REFERENCES medicos(id);
 
--- Restricción para evitar conflictos de horario (misma fecha, hora y médico)
-ALTER TABLE citas
-ADD CONSTRAINT citas_unique_horario
-UNIQUE (fecha, hora, id_medico);
+-- Inserts citas
+INSERT INTO citas VALUES (1, '0102030401', 1, '2025-01-15', '08:00:00', 'Consulta general', 'Agendada');
+INSERT INTO citas VALUES (2, '0102030402', 2, '2025-01-16', '09:00:00', 'Chequeo cardiaco', 'Agendada');
+INSERT INTO citas VALUES (3, '0102030403', 3, '2025-01-17', '14:00:00', 'Control pediátrico', 'Atendida');
+INSERT INTO citas VALUES (4, '0102030404', 4, '2025-01-20', '10:30:00', 'Revisión dermatológica', 'Agendada');
+INSERT INTO citas VALUES (5, '0102030405', 5, '2025-01-21', '08:00:00', 'Control de fractura', 'Atendida');
+INSERT INTO citas VALUES (6, '0102030406', 6, '2025-01-22', '15:30:00', 'Consulta ginecológica anual', 'Agendada');
+INSERT INTO citas VALUES (7, '0102030407', 7, '2025-01-23', '09:00:00', 'Examen de vista', 'Atendida');
+INSERT INTO citas VALUES (8, '0102030408', 8, '2025-01-24', '14:00:00', 'Evaluación neurológica', 'Agendada');
+INSERT INTO citas VALUES (9, '0102030409', 9, '2025-01-27', '10:00:00', 'Limpieza dental', 'Cancelada');
+INSERT INTO citas VALUES (10, '0102030410', 10, '2025-01-28', '15:00:00', 'Control endocrino', 'Agendada');
 
--- Check para estados permitidos
-ALTER TABLE citas
-ADD CONSTRAINT citas_estado_ck
-CHECK (estado IN ('Agendada', 'Atendida', 'Cancelada'));
 
--- Check para hora válida (ejemplo: entre 08:00 y 19:00)
-ALTER TABLE citas
-ADD CONSTRAINT citas_hora_ck
-CHECK (hora BETWEEN '08:00:00' AND '19:00:00');
-
--- 4. INSERTS correctos de citas
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (1, '2025-01-15', '08:00:00', '0102030401', 1, 'Consulta general', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (2, '2025-01-15', '09:00:00', '0102030402', 2, 'Chequeo cardiaco', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (3, '2025-01-15', '10:00:00', '0102030403', 3, 'Control pediátrico', 'Atendida');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (4, '2025-01-16', '08:00:00', '0102030404', 4, 'Control ginecológico', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (5, '2025-01-16', '09:00:00', '0102030405', 5, 'Dolor de rodilla', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (6, '2025-01-16', '10:00:00', '0102030406', 6, 'Alergia en la piel', 'Cancelada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (7, '2025-01-17', '15:00:00', '0102030407', 7, 'Dolor de cabeza', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (8, '2025-01-17', '08:00:00', '0102030408', 8, 'Control hormonal', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (9, '2025-01-17', '14:00:00', '0102030409', 9, 'Revisión visual', 'Atendida');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (10, '2025-01-18', '09:00:00', '0102030410', 10, 'Chequeo general', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (11, '2025-01-18', '10:00:00', '0102030401', 1, 'Fiebre', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (12, '2025-01-18', '11:00:00', '0102030402', 2, 'Hipertensión', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (13, '2025-01-19', '08:00:00', '0102030403', 3, 'Vacunación', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (14, '2025-01-19', '09:00:00', '0102030404', 4, 'Consulta prenatal', 'Agendada');
-INSERT INTO citas (id, fecha, hora, cedula_paciente, id_medico, motivo, estado) VALUES (15, '2025-01-19', '10:00:00', '0102030405', 5, 'Dolor lumbar', 'Agendada');
+-- TABLA 4: expedientes_clinicos
+-- PK compuesta (id, cedula_paciente, id_medico)
+-- FK forman parte de la PK → línea sólida
 
 CREATE TABLE expedientes_clinicos (
     id INT,
     cedula_paciente CHAR(10),
-    fecha_consulta DATE,
     id_medico INT,
+    fecha_consulta DATE,
     diagnostico TEXT,
     tratamiento TEXT,
     receta TEXT,
     observaciones TEXT
 );
 
--- 3. ALTER TABLE para expedientes_clinicos
+-- Primary Key compuesta
 ALTER TABLE expedientes_clinicos
-ADD PRIMARY KEY (id);
+ADD PRIMARY KEY (id, cedula_paciente, id_medico);
 
-ALTER TABLE expedientes_clinicos
-MODIFY id INT AUTO_INCREMENT;
-
-ALTER TABLE expedientes_clinicos
-MODIFY COLUMN cedula_paciente CHAR(10) NOT NULL;
-
-ALTER TABLE expedientes_clinicos
-MODIFY COLUMN fecha_consulta DATE NOT NULL;
-
+-- Foreign Key paciente
 ALTER TABLE expedientes_clinicos
 ADD CONSTRAINT expedientes_paciente_fk
 FOREIGN KEY (cedula_paciente) REFERENCES pacientes(cedula);
 
+-- Foreign Key medico
 ALTER TABLE expedientes_clinicos
 ADD CONSTRAINT expedientes_medico_fk
 FOREIGN KEY (id_medico) REFERENCES medicos(id);
 
--- Índice para búsquedas rápidas por paciente
-ALTER TABLE expedientes_clinicos
-ADD INDEX idx_cedula (cedula_paciente);
-
--- 4. INSERTS de ejemplo (basados en algunas citas atendidas)
-INSERT INTO expedientes_clinicos (cedula_paciente, fecha_consulta, id_medico, diagnostico, tratamiento, receta, observaciones)
-VALUES ('0102030403', '2025-01-15', 3, 'Resfriado común', 'Reposo y líquidos', 'Paracetamol 500mg cada 8 horas', 'Control en 1 semana si no mejora');
-
-INSERT INTO expedientes_clinicos (cedula_paciente, fecha_consulta, id_medico, diagnostico, tratamiento, receta, observaciones)
-VALUES ('0102030409', '2025-01-17', 9, 'Miopía leve', 'Uso de lentes', 'Lentes correctivos -2.00', 'Revisión anual');
-
-INSERT INTO expedientes_clinicos (cedula_paciente, fecha_consulta, id_medico, diagnostico, tratamiento, receta, observaciones)
-VALUES ('0102030401', '2025-01-18', 1, 'Fiebre viral', 'Hidratación y antitérmicos', 'Ibuprofeno 400mg si fiebre >38.5°C', 'Reposo 3 días');
-
+-- Inserts expedientes
+INSERT INTO expedientes_clinicos VALUES (1, '0102030401', 1, '2025-01-15', 'Resfriado común', 'Reposo y hidratación', 'Paracetamol 500mg cada 8 horas', 'Control en 7 días si no mejora');
+INSERT INTO expedientes_clinicos VALUES (2, '0102030402', 2, '2025-01-16', 'Hipertensión arterial', 'Dieta baja en sal y ejercicio', 'Losartán 50mg diario', 'Seguimiento mensual y control de presión');
+INSERT INTO expedientes_clinicos VALUES (3, '0102030403', 3, '2025-01-17', 'Gripe estacional', 'Reposo absoluto', 'Ibuprofeno 400mg y antigripal', 'Mejoría leve, control en 5 días');
+INSERT INTO expedientes_clinicos VALUES (4, '0102030404', 4, '2025-01-20', 'Dermatitis atópica', 'Evitar alérgenos', 'Crema con hidrocortisona', 'Aplicar 2 veces al día, revisión en 15 días');
+INSERT INTO expedientes_clinicos VALUES (5, '0102030405', 5, '2025-01-21', 'Esguince de tobillo grado II', 'Inmovilización y hielo', 'Antiinflamatorios y reposo', 'Rehabilitación en 2 semanas');
+INSERT INTO expedientes_clinicos VALUES (6, '0102030406', 6, '2025-01-22', 'Control ginecológico anual normal', 'Mantener hábitos saludables', 'Ninguno', 'Próximo control en 1 año');
+INSERT INTO expedientes_clinicos VALUES (7, '0102030407', 7, '2025-01-23', 'Miopía progresiva', 'Uso de lentes correctivos', 'Lentes graduados nuevos', 'Control en 6 meses');
+INSERT INTO expedientes_clinicos VALUES (8, '0102030408', 8, '2025-01-24', 'Migraña crónica', 'Evitar desencadenantes', 'Sumatriptán según necesidad', 'Estudio adicional recomendado');
+INSERT INTO expedientes_clinicos VALUES (9, '0102030409', 9, '2025-01-27', 'Caries dental múltiple', 'Tratamiento odontológico', 'Obturaciones y profilaxis', 'Continuar tratamiento en próxima visita');
+INSERT INTO expedientes_clinicos VALUES (10, '0102030410', 10, '2025-01-28', 'Hipotiroidismo', 'Tratamiento hormonal', 'Levotiroxina 50mcg diario', 'Control hormonal en 6 semanas');
 
 -- TABLA 5: historial_citas
--- Para cumplir el requisito 7: Registrar reprogramaciones y cancelaciones de citas,
--- guardando un historial de cambios (auditoría de modificaciones en citas).
+-- PK compuesta (id_historial, id_cita)
+-- FK forma parte de la PK → línea sólida
 
--- 1. Crear tabla
 CREATE TABLE historial_citas (
     id_historial INT,
     id_cita INT,
-    fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
-    accion VARCHAR(50),  -- 'Creación', 'Reprogramación', 'Cancelación', 'Atención'
+    cedula_paciente CHAR(10),
+    id_medico INT,
+    fecha_cambio DATETIME,
+    accion VARCHAR(50),
     estado_anterior VARCHAR(50),
     estado_nuevo VARCHAR(50),
-    usuario_modificacion VARCHAR(100)  -- Podría ser el nombre del usuario que realizó el cambio
+    usuario_modificacion VARCHAR(100)
 );
 
--- 3. ALTER TABLE para historial_citas
+-- PK compuesta (incluye la PK completa de citas)
 ALTER TABLE historial_citas
-ADD PRIMARY KEY (id_historial);
+ADD PRIMARY KEY (id_historial, id_cita, cedula_paciente, id_medico);
 
-ALTER TABLE historial_citas
-MODIFY id_historial INT AUTO_INCREMENT;
-
-ALTER TABLE historial_citas
-MODIFY COLUMN id_cita INT NOT NULL;
-
-ALTER TABLE historial_citas
-MODIFY COLUMN accion VARCHAR(50) NOT NULL;
-
+-- FK compuesta → línea sólida 🔴
 ALTER TABLE historial_citas
 ADD CONSTRAINT historial_cita_fk
-FOREIGN KEY (id_cita) REFERENCES citas(id);
+FOREIGN KEY (id_cita, cedula_paciente, id_medico)
+REFERENCES citas(id, cedula_paciente, id_medico);
 
-ALTER TABLE historial_citas
-ADD CONSTRAINT historial_accion_ck
-CHECK (accion IN ('Creación', 'Reprogramación', 'Cancelación', 'Atención', 'Modificación'));
 
--- 4. INSERTS de ejemplo (historial para algunas citas)
--- Ejemplo: creación automática al agendar
-INSERT INTO historial_citas (id_cita, accion, estado_anterior, estado_nuevo, usuario_modificacion)
-VALUES (1, 'Creación', NULL, 'Agendada', 'Sistema');
+-- Inserts historial
+INSERT INTO historial_citas VALUES (1, 1, '0102030401', 1, '2025-12-25 16:15:25', 'Creación', NULL, 'Agendada', 'Sistema');
+INSERT INTO historial_citas VALUES (2, 2, '0102030402', 2, NOW(), 'Creación', NULL, 'Agendada', 'Sistema');
+INSERT INTO historial_citas VALUES (3, 3, '0102030403', 3, NOW(), 'Atención', 'Agendada', 'Atendida', 'Dr. Juan Andrade');
+INSERT INTO historial_citas VALUES (4, 4, '0102030404', 4, '2025-12-10 09:45:00', 'Creación', NULL, 'Agendada', 'Sistema');
+INSERT INTO historial_citas VALUES (5, 5, '0102030405', 5, '2025-12-12 11:20:30', 'Atención', 'Agendada', 'Atendida', 'Dr. Roberto Sánchez');
+INSERT INTO historial_citas VALUES (6, 6, '0102030406', 6, '2025-12-15 14:00:00', 'Creación', NULL, 'Agendada', 'Sistema');
+INSERT INTO historial_citas VALUES (7, 9, '0102030409', 9, '2025-12-16 10:30:00', 'Cancelación', 'Agendada', 'Cancelada', 'Sistema');
+INSERT INTO historial_citas VALUES (8, 7, '0102030407', 7, '2025-12-17 09:15:45', 'Atención', 'Agendada', 'Atendida', 'Dr. Miguel Torres');
+INSERT INTO historial_citas VALUES (9, 8, '0102030408', 8, '2025-12-17 13:50:00', 'Creación', NULL, 'Agendada', 'Sistema');
+INSERT INTO historial_citas VALUES (10, 10, '0102030410', 10, '2025-12-17 15:20:10', 'Creación', NULL, 'Agendada', 'Sistema');
 
-INSERT INTO historial_citas (id_cita, accion, estado_anterior, estado_nuevo, usuario_modificacion)
-VALUES (6, 'Creación', NULL, 'Agendada', 'Sistema');
-
-INSERT INTO historial_citas (id_cita, accion, estado_anterior, estado_nuevo, usuario_modificacion)
-VALUES (6, 'Cancelación', 'Agendada', 'Cancelada', 'Recepcionista Ana');
-
-INSERT INTO historial_citas (id_cita, accion, estado_anterior, estado_nuevo, usuario_modificacion)
-VALUES (3, 'Atención', 'Agendada', 'Atendida', 'Dr. Juan Andrade');
-
-INSERT INTO historial_citas (id_cita, accion, estado_anterior, estado_nuevo, usuario_modificacion)
-VALUES (9, 'Atención', 'Agendada', 'Atendida', 'Dr. Pablo Herrera');
-
--- CONSULTAS DE VERIFICACIÓN (opcional, para probar)
-SELECT * FROM pacientes;
-SELECT * FROM medicos;
-SELECT * FROM citas;
-
-drop DATABASE vidaplena;
+SELECT * FROM historial_citas;
