@@ -1,9 +1,7 @@
 
-
--- DROP DATABASE vidaplena;
 -- CREAR BASE DE DATOS
-
 CREATE DATABASE vidaplena;
+-- usar la base de datos
 USE vidaplena;
 
 
@@ -19,17 +17,17 @@ CREATE TABLE pacientes (
     direccion VARCHAR(150)
 );
 
--- Primary Key
+-- validacion de clave primaria  para la cedula
 ALTER TABLE pacientes
 ADD PRIMARY KEY (cedula);
 
--- Validaciones
+-- Validacion para ver que la cedula tenga exactamente 10 digitos
 ALTER TABLE pacientes
 ADD CONSTRAINT pacientes_cedula_ck CHECK (cedula REGEXP '^[0-9]{10}$');
-
+-- validacion de check para ver que el telefono tiene 10 digitos 
 ALTER TABLE pacientes
 ADD CONSTRAINT pacientes_telefono_ck CHECK (telefono REGEXP '^[0-9]{10}$');
-
+-- validacion de que el correo tiene que contener un @
 ALTER TABLE pacientes
 ADD CONSTRAINT pacientes_correo_ck CHECK (correo LIKE '%@%.%');
 
@@ -57,11 +55,11 @@ CREATE TABLE medicos (
     horario VARCHAR(50)
 );
 
--- Primary Key
+-- validacion de clave primaria para id
 ALTER TABLE medicos
 ADD PRIMARY KEY (id);
 
--- Restricción de unicidad
+-- validacion de UNIQUE para verificar que un medico no puede tener la misma especialidad que otro
 ALTER TABLE medicos
 ADD CONSTRAINT medicos_nombre_especialidad_uk UNIQUE (nombre, especialidad);
 
@@ -80,7 +78,6 @@ INSERT INTO medicos VALUES (10, 'Dra. Sofia Ramírez', 'Endocrinología', 'Consu
 
 -- TABLA 3: citas
 -- PK compuesta (id, cedula_paciente, id_medico)
--- FK forman parte de la PK → línea sólida
 
 CREATE TABLE citas (
     id INT,
@@ -96,12 +93,12 @@ CREATE TABLE citas (
 ALTER TABLE citas
 ADD PRIMARY KEY (id, cedula_paciente, id_medico);
 
--- Foreign Key hacia pacientes
+-- validacion de clave foranea para verificar qye la cedula del paciente exista en la tabla de pacientes
 ALTER TABLE citas
 ADD CONSTRAINT citas_paciente_fk
 FOREIGN KEY (cedula_paciente) REFERENCES pacientes(cedula);
 
--- Foreign Key hacia medicos
+-- validacion de clave foranea para Verificar que el id del médico exista en la tabla medicos
 ALTER TABLE citas
 ADD CONSTRAINT citas_medico_fk
 FOREIGN KEY (id_medico) REFERENCES medicos(id);
@@ -121,7 +118,6 @@ INSERT INTO citas VALUES (10, '0102030410', 10, '2025-01-28', '15:00:00', 'Contr
 
 -- TABLA 4: expedientes_clinicos
 -- PK compuesta (id, cedula_paciente, id_medico)
--- FK forman parte de la PK → línea sólida
 
 CREATE TABLE expedientes_clinicos (
     id INT,
@@ -138,12 +134,12 @@ CREATE TABLE expedientes_clinicos (
 ALTER TABLE expedientes_clinicos
 ADD PRIMARY KEY (id, cedula_paciente, id_medico);
 
--- Foreign Key paciente
+-- validacion de clave foranea para verificar qye la cedula del paciente exista en la tabla de pacientes
 ALTER TABLE expedientes_clinicos
 ADD CONSTRAINT expedientes_paciente_fk
 FOREIGN KEY (cedula_paciente) REFERENCES pacientes(cedula);
 
--- Foreign Key medico
+-- validacion de clave foranea para verifica que el médico exista
 ALTER TABLE expedientes_clinicos
 ADD CONSTRAINT expedientes_medico_fk
 FOREIGN KEY (id_medico) REFERENCES medicos(id);
@@ -162,7 +158,6 @@ INSERT INTO expedientes_clinicos VALUES (10, '0102030410', 10, '2025-01-28', 'Hi
 
 -- TABLA 5: historial_citas
 -- PK compuesta (id_historial, id_cita)
--- FK forma parte de la PK → línea sólida
 
 CREATE TABLE historial_citas (
     id_historial INT,
@@ -176,11 +171,11 @@ CREATE TABLE historial_citas (
     usuario_modificacion VARCHAR(100)
 );
 
--- PK compuesta (incluye la PK completa de citas)
+-- PK compuesta 
 ALTER TABLE historial_citas
 ADD PRIMARY KEY (id_historial, id_cita, cedula_paciente, id_medico);
 
--- FK compuesta → línea sólida 🔴
+-- validacion de clave foranea que Verifica que la combinación (id_cita, cedula_paciente, id_medico) exista en la tabla citasALTER TABLE historial_citas
 ALTER TABLE historial_citas
 ADD CONSTRAINT historial_cita_fk
 FOREIGN KEY (id_cita, cedula_paciente, id_medico)
@@ -199,4 +194,10 @@ INSERT INTO historial_citas VALUES (8, 7, '0102030407', 7, '2025-12-17 09:15:45'
 INSERT INTO historial_citas VALUES (9, 8, '0102030408', 8, '2025-12-17 13:50:00', 'Creación', NULL, 'Agendada', 'Sistema');
 INSERT INTO historial_citas VALUES (10, 10, '0102030410', 10, '2025-12-17 15:20:10', 'Creación', NULL, 'Agendada', 'Sistema');
 
+
+SELECT * FROM pacientes;
+SELECT * FROM medicos;
+SELECT * FROM citas;
+SELECT * FROM expedientes_clinicos;
 SELECT * FROM historial_citas;
+
