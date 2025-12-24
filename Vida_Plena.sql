@@ -201,3 +201,119 @@ SELECT * FROM citas;
 SELECT * FROM expedientes_clinicos;
 SELECT * FROM historial_citas;
 
+-- -- TABLA  FACTURAS
+CREATE TABLE facturas (
+    facturanumero CHAR(10) PRIMARY KEY,
+    fecha DATE NOT NULL,
+    cedula_paciente CHAR(10) NOT NULL,
+    total DECIMAL(15,2) NOT NULL
+);
+-- FK a pacientes
+ALTER TABLE facturas
+ADD CONSTRAINT facturas_paciente_fk
+FOREIGN KEY (cedula_paciente) REFERENCES pacientes(cedula);
+-- TABLA factura_Detalle
+CREATE TABLE facturadetalle (
+    facturanumero CHAR(10),
+    cita_id INT,                          -- equivalente al medicamento_id 
+    cedula_paciente CHAR(10),             -- estos dos extra para referenciar la PK compuesta de citas
+    medico_id INT,
+    cantidad INT NOT NULL,
+    precio DECIMAL(15,2) NOT NULL
+);
+-- Clave primaria compuesta (facturanumero + id del ítem)
+ALTER TABLE facturadetalle
+ADD PRIMARY KEY (facturanumero, cita_id);
+
+
+-- FK a facturas
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_factura_fk
+FOREIGN KEY (facturanumero) REFERENCES facturas(facturanumero);
+
+-- FK compuesta a citas (para asegurar que la cita existe)
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_cita_fk
+FOREIGN KEY (cita_id, cedula_paciente, medico_id)
+REFERENCES citas(id, cedula_paciente, id_medico);
+
+-- Checks 
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_cantidad_ck CHECK (cantidad > 0);
+
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_precio_ck CHECK (precio > 0);
+
+-- Registros
+
+INSERT INTO facturas VALUES ('0000000001', '2025-01-15', '0102030401', 35.00);
+
+INSERT INTO facturadetalle VALUES ('0000000001', 1, '0102030401', 1, 1, 35.00);
+-- (facturanumero, cita_id, cedula_paciente, medico_id, cantidad, precio)
+
+INSERT INTO facturas VALUES ('0000000002', '2025-01-16', '0102030402', 80.00);
+
+INSERT INTO facturadetalle VALUES ('0000000002', 2, '0102030402', 2, 1, 80.00);
+
+-- Vista de tabla
+select *from facturas;
+select *from facturadetalle;
+
+
+-- -- TABLA  FACTURAS
+CREATE TABLE facturas (
+    facturanumero CHAR(10) PRIMARY KEY,
+    fecha DATE NOT NULL,
+    cedula_paciente CHAR(10) NOT NULL,
+    total DECIMAL(15,2) NOT NULL
+);
+-- FK a pacientes
+ALTER TABLE facturas
+ADD CONSTRAINT facturas_paciente_fk
+FOREIGN KEY (cedula_paciente) REFERENCES pacientes(cedula);
+-- TABLA factura_Detalle
+CREATE TABLE facturadetalle (
+    facturanumero CHAR(10),
+    cita_id INT,                          -- equivalente al medicamento_id 
+    cedula_paciente CHAR(10),             -- estos dos extra para referenciar la PK compuesta de citas
+    medico_id INT,
+    cantidad INT NOT NULL,
+    precio DECIMAL(15,2) NOT NULL
+);
+-- Clave primaria compuesta (facturanumero + id del ítem)
+ALTER TABLE facturadetalle
+ADD PRIMARY KEY (facturanumero, cita_id);
+
+
+-- FK a facturas
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_factura_fk
+FOREIGN KEY (facturanumero) REFERENCES facturas(facturanumero);
+
+-- FK compuesta a citas (para asegurar que la cita existe)
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_cita_fk
+FOREIGN KEY (cita_id, cedula_paciente, medico_id)
+REFERENCES citas(id, cedula_paciente, id_medico);
+
+-- Checks 
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_cantidad_ck CHECK (cantidad > 0);
+
+ALTER TABLE facturadetalle
+ADD CONSTRAINT facturadetalle_precio_ck CHECK (precio > 0);
+
+-- Registros
+
+INSERT INTO facturas VALUES ('0000000001', '2025-01-15', '0102030401', 35.00);
+
+INSERT INTO facturadetalle VALUES ('0000000001', 1, '0102030401', 1, 1, 35.00);
+-- (facturanumero, cita_id, cedula_paciente, medico_id, cantidad, precio)
+
+INSERT INTO facturas VALUES ('0000000002', '2025-01-16', '0102030402', 80.00);
+
+INSERT INTO facturadetalle VALUES ('0000000002', 2, '0102030402', 2, 1, 80.00);
+
+-- Vista de tabla
+select *from facturas;
+select *from facturadetalle;
